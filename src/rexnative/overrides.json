@@ -1,0 +1,7 @@
+{
+  "_comment": "Iron Brigade's choices over the generated layer (python -m rexnative adapt). The game drives a second device while loading: only Swap's is followed. CreateDevice (8263E748) and RunCommandBuffer (8264EF50) are found but not hooked yet (the hand-made port had neither): the device is adopted from the first Swap. Scene and defaults: the values the port ran with before ReXNative.",
+  "functions": {"CreateDevice": null, "RunCommandBuffer": null},
+  "devices": {"follow_swap_device_only": true, "configure_at_first_device": true},
+  "scene": {"kSceneSurfaceMask": 212991, "kSceneSurface": 66816, "width": 1280, "scaled_pitch": 1280, "height": 720},
+  "defaults": {"pgr4_render_height": 720, "pgr4_native_occlusion": false, "pgr4_native_display_aspect": "16.0 / 9.0"}
+}

@@ -1,0 +1,28 @@
+# Build outputs and logs.
+build/
+*.out
+*.log
+*.profraw
+stacks.txt
+crash.txt
+
+# Nothing from the game: your own copy goes in game-data/ (and the add-on in dlc-data/).
+game-data/
+dlc-data/
+game-pkg/
+dlc-pkg/
+*.xex
+*.xexp
+# ReXGlue's C++ of the game's code (python tools/gen_manifest.py writes it).
+generated/
+
+# Xenia Canary's community patches for the game (xenia-canary/game-patches), kept locally.
+ref/
+
+# The renderer's hand-made copy from before ReXNative, kept locally.
+attic/
+
+# ReXNative layer: the tool's report and full result (local paths); regenerate with
+# python -m rexnative adapt.
+src/rexnative/layer.json
+src/rexnative/report.md
