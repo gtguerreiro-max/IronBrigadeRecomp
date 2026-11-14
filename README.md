@@ -32,10 +32,12 @@ brought up for it.
   mission. It needs `render_target_path_d3d12 = "rov"` (set in `config/ironbrigade.toml`): the
   game renders its scene in the 7e3 HDR format, which the default path approximates too bright.
 - **Native renderer (ReXNative, with DLAA / DLSS / DLSS 5 and a settings menu): in progress.**
-  It draws the warning, logo and title screens and opens its settings menu (**F1**). The game's
-  first 3D frames then hang the GPU (a D3D12 TDR); the earlier hand-made copy of the renderer did
-  the same, so this is being investigated in ReXNative. Turn it on with
-  `--pgr4_native_primary=true`; off, the stock renderer draws everything.
+  It draws the warning, logo and title screens and opens its settings menu (**F1**), and the
+  game goes on into its intro (the GPU hang the first 3D frames used to cause is fixed: this
+  LTCG build passes its draw arguments in other registers). The intro video is still black, with
+  its subtitles drawn: its frames come from a draw that writes memory (memexport), which ReXNative
+  does not run yet. Turn it on with `--rexnative=true`; off, the stock renderer draws
+  everything.
 
 Details, findings and next steps: [docs/NATIVE_RENDERER.md](docs/NATIVE_RENDERER.md) and
 [docs/NOTES.md](docs/NOTES.md).

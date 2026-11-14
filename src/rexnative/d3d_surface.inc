@@ -68,7 +68,7 @@ D3D_FN(82644440, "fn_826C4328", kOther)  // exact high
 D3D_FN(82644450, "SetRS_PA_SU_SC_MODE_CNTL_826C4338", kState)  // exact high
 D3D_FN(82644470, "GetRS_PA_SU_SC_MODE_CNTL_826C4358", kGet)  // exact high
 D3D_FN(826444A0, "SetRS_RB_COLOR_MASK", kState)  // exact high
-D3D_FN(826445A0, "SetField_11876", kState)  // fuzzy high pgr4
+D3D_FN(826445A0, "SetField_11876", kState)  // exact high
 D3D_FN(82644A20, "SetRS_PA_CL_CLIP_CNTL_PA_CL_VTE_CNTL", kState)  // exact high
 D3D_FN(82644A70, "fn_826C4958", kOther)  // exact high
 D3D_FN(82644D78, "SetRS_PA_SU_VTX_CNTL", kState)  // exact high
@@ -95,7 +95,7 @@ D3D_FN(82645C38, "fn_826C5AD8", kOther)  // exact high
 D3D_FN(82645C88, "SetStreamSource", kStream)  // masked high
 D3D_FN(82645DA8, "SetIndices", kStream)  // masked high
 D3D_FN(82646190, "SetDepthStencilSurface", kSurface)  // masked high
-D3D_FN(82646468, "GetVertexDeclaration", kShader)  // neighbour medium
+D3D_FN(82646468, "GetVertexDeclaration", kShader)  // fuzzy medium
 D3D_FN(826464A8, "GetDepthStencilSurface", kSurface)  // neighbour high
 D3D_FN(82646680, "fn_826C5FB8", kOther)  // exact high
 D3D_FN(82646ED8, "Swap", kSwap)  // callees medium

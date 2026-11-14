@@ -93,6 +93,10 @@ if ($stages -contains 'install') {
     New-Item -ItemType Directory -Force $out | Out-Null
     Get-ChildItem "$Dest\game" -Include ironbrigade*.exe, ironbrigade*.pdb -Recurse -Depth 2 |
         Where-Object FullName -notmatch 'CMakeFiles' | Copy-Item -Destination $out -Force
+    # ReXNative's runtime DLLs (rexnative_add copies them beside the executable): NVIDIA DLSS /
+    # DLSS 5 and AMD FidelityFX (FSR upscaler, frame generation).
+    Get-ChildItem "$Dest\game\*" -Include nvngx_*.dll, amd_fidelityfx_*_dx12.dll -ErrorAction SilentlyContinue |
+        Copy-Item -Destination $out -Force
     # The SDK's DLLs: the runtime, the Xenos GPU plugin and AMD FidelityFX.
     Copy-Item "$SdkInstall\bin\*.dll" $out -Force
     # Kept once written (the user may edit it).

@@ -14,8 +14,8 @@ The renderer is no longer copied into this port. It is ReXNative's
 game-side functions (`renderer/src/glue_defaults.cpp`, was `src/native_glue.cpp`, identical).
 `CMakeLists.txt` includes `${IRONBRIGADE_REXNATIVE_DIR}/renderer/rexnative.cmake` (default
 `../ReXNative`) and calls `rexnative_add(ironbrigade ...)`. Built with `IRONBRIGADE_NATIVE`
-(default ON on Windows); off at run time unless `--pgr4_native_primary=true` (presenter) or
-`--pgr4_native=true` (debug window beside the Xenos plugin).
+(default ON on Windows); off at run time unless `--rexnative=true` (presenter) or
+`--rexnative_beside_xenos=true` (debug window beside the Xenos plugin).
 
 Everything specific to Iron Brigade is in `src/rexnative/`: `game_layer.h` (addresses, device
 offsets, Resolve arguments and default clear colour, devices, scene) and `d3d_surface.inc` (the
@@ -48,7 +48,7 @@ The generated layer's values equal the hand-made layer's (with the `slice` fix);
 
 With ReXNative the warning, logo and "PRESS START" screens are drawn as before, and the HUD opens
 (F1, titled "Iron Brigade settings"). The route Enter at 10 and 18 s, Space at 26 s, Enter at
-32 s, Space at 38 s (`--pgr4_native_primary=true --pgr4_native_replace_draws=false`, windowed)
+32 s, Space at 38 s (`--rexnative=true --rexnative_replace_draws=false`, windowed)
 now passes the title and reaches the first 3D frames: resolves of 320x161, 256x128 and 128x64
 images at frame ~356. About 5 s later the GPU hangs: D3D12 `DEVICE_HUNG` (TDR, `887A0006`),
 "frame 359 failed; native path off", and the Xenos plugin aborts (its D3D12 device is removed
@@ -57,6 +57,19 @@ too; `crash.txt` is its stack). The same happens with r9 = slice and with slice 
 `attic/before-rexnative/`, with the old hand-made renderer too. Earlier runs never got past the
 loading screen, so this is a pre-existing native-renderer problem newly reached, not a ReXNative
 regression. It is the next blocker, before the WAIT_REG_MEM item below.
+
+**Fixed the same evening.** The hang came from the draw arguments. Iron Brigade's LTCG
+DrawIndexedVertices (`8264DF88`) has no BaseVertexIndex: `(dev, primitive, start index r5, index
+count r6)`, base vertex a constant 0 (`li r17,0` where From Dust has `mr r17,r5`); its
+DrawVertices (`8264DB70`) takes only the vertex count, in r5 (start 0). Read in the public
+registers (count from r7 / r6), the counts were garbage and the draws long enough for a TDR.
+ReXNative's tool now derives every hooked draw's argument registers (`kArgsDrawIndexedVertices =
+{3, 4, 0, 5, 6, ...}`, `kArgsDrawVertices = {3, 4, 0, 5, ...}` in `src/rexnative/game_layer.h`)
+and the hooks put them in the public order (`PublicRegs`). With that, on the same route the game
+plays its intro at a steady 30 FPS for minutes (no TDR, no WAIT_REG_MEM hang): the subtitles are
+drawn, the video itself is black. The log says `memexport unsupported (draw skipped)` once: the
+video's frames come from a memexport draw, which ReXNative does not run yet (its roadmap item 8).
+Also `unsupported format k_DXT5A` (one 128x128 texture).
 
 ## What was done before (hand-made port)
 
@@ -104,7 +117,7 @@ Iron Brigade links the same XDK as From Dust (2.0.20353), but the **LTCG** D3D l
   `8263E748` (writes 0 to *ppDevice in r8, allocates the 0x6000-byte device, returns
   E_OUTOFMEMORY); its second caller `8260DDF8` creates a 640x480 device when no global one
   exists, a likely source of the second device. Not hooked yet.]
-- **Occlusion queries**: hooks not found; `pgr4_native_occlusion` is off by default anyway.
+- **Occlusion queries**: hooks not found; `rexnative_occlusion` is off by default anyway.
 - **Two devices**: while a level loads, a second device object (main device + 0x6000) is driven
   from another thread [INFERENCE: XDK command buffer recording, replayed by RunCommandBuffer,
   Iron Brigade 0x8264EF50 by the PGR4 match]. The renderer follows one device, and alternating
@@ -113,10 +126,10 @@ Iron Brigade links the same XDK as From Dust (2.0.20353), but the **LTCG** D3D l
 
 ## Results
 
-- `--pgr4_native_primary=true --pgr4_native_replace_draws=false`: D3D12 on the RTX 5060 Ti, HDR10
+- `--rexnative=true --rexnative_replace_draws=false`: D3D12 on the RTX 5060 Ti, HDR10
   swapchain, the warning / logo screens and "PRESS START" are drawn by the native renderer.
 - **Blocker: hang at the first loading screen** (the stock renderer goes on to the intro movie).
-  Same hang with `--pgr4_native=true` (Xenos still draws everything). Host stacks
+  Same hang with `--rexnative_beside_xenos=true` (Xenos still draws everything). Host stacks
   (`--ironbrigade_dump_stacks_at=70`, `src/stack_dump.cpp`, symbolised with
   `tools/map_symbolize.py build/game/ironbrigade.map`):
   - render thread: `Swap sub_82646ED8 -> sub_826404C8 -> sub_8263E308`, spinning: the D3D's wait
@@ -145,9 +158,9 @@ Iron Brigade links the same XDK as From Dust (2.0.20353), but the **LTCG** D3D l
 3. Find Begin/EndTiling in Iron Brigade (the scene is 1280x646 with 2x MSAA: 13 MB, more than the
    10 MB EDRAM, so it is tiled; LTCG may have inlined them into the Swap/Resolve path).
 4. memexport draws, k_DXT5A textures.
-5. Then DLAA (`pgr4_native_upscaler=true`, `pgr4_native_dlss_mode=dlaa`) and DLSS 5
-   (`pgr4_native_dlss5=true`). DLSS 5 must run on the HDR scene **before** the game's tone mapping
-   / colour grading (`pgr4_native_dlss5_stage = "scene"`); Iron Brigade renders its scene in the
+5. Then DLAA (`rexnative_upscaler=true`, `rexnative_dlss_mode=dlaa`) and DLSS 5
+   (`rexnative_dlss5=true`). DLSS 5 must run on the HDR scene **before** the game's tone mapping
+   / colour grading (`rexnative_dlss5_stage = "scene"`); Iron Brigade renders its scene in the
    7e3 (k_2_10_10_10_FLOAT) HDR format, which is that stage. The pass that tone-maps it has to be
    identified (RenderDoc 1.47 is in `F:\FromDustRecomp\third_party\renderdoc_dl`; FromDustDeck's
    `tools/rdoc_*.py` list draws, render targets and shaders).
