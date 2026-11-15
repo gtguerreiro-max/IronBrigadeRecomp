@@ -148,10 +148,18 @@ At the same moment of the first mission (the same route, `scripts\live.ps1`), tw
   with the sRGB curve, close to the PWL one); draws without blending still write exact PWL
   bytes. The stock renderer's default `rtv` path makes the same approximation, which is most
   likely why this port needs `rov` (the note on 7e3 in `config/ironbrigade.toml` predates this
-  finding). Still a little brighter than the stock renderer: a vertical trail under the
-  tentacles' sparks, drawn into a half-resolution particle target whose depth the game clears
-  to 0 (nothing hides those particles there; the composite that adds them reads the scene's
-  depth). Not resolved.
+  finding).
+- **Glow columns under the tentacles** (still there after that fix, the user saw them on the
+  Deck). RenderDoc on both renderers (`scriptsdoc.ps1 mesh`, `cbuffers`, `disasm`): the same
+  sprites, vertex shader outputs and constants in both; the stock renderer's are simply hidden
+  by the scenery. The game draws those particles at half resolution with 4x MSAA (640x323) over
+  the depth of its full-resolution 1x scene at the same EDRAM base (1364): on the Xenos the 4
+  samples of a half-resolution pixel are the scene's 2x2 pixels, so the scene's depth hides
+  the particles behind the factory. ReXNative had made that 4x surface a depth target of its
+  own, never written: every particle passed. Now, when a 4x (or 2x) depth surface is bound
+  and the 1x one under it changed since, its depth is copied into the MSAA samples
+  (`RenderTargets::AliasDepth`, once a frame here). The image now matches the stock
+  renderer's.
 - **Huge stretched triangles** (yellow and black) instead of the mobile trench, once in five
   runs, staying until the game exits. The GPU's copy of the trench's vertex buffer was zeros
   while guest memory held the vertices (RenderDoc's buffer contents against the process's

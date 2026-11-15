@@ -41,9 +41,10 @@ brought up for it.
   writes in the console's gamma). It goes on into the first mission at 30 FPS with its
   static scenery (towers, the base), which the game draws from recorded command buffers that
   ReXNative replays since 2026-11-15 (before, it showed bright yellow). Its light and
-  particles blend in linear color into the game's gamma targets, as on the console (before,
-  the glows came out far too bright). Turn it on with `--rexnative=true`; off, the stock
-  renderer draws everything.
+  particles blend in linear color into the game's gamma targets, as on the console, and its
+  half-resolution particles are hidden by the scenery's depth (before, the glows came out far
+  too bright, with purple columns under the towers). Turn it on with `--rexnative=true`; off,
+  the stock renderer draws everything.
 - **Steam Deck: plays at the game's 30 FPS** with ReXNative, the Windows build under Proton
   (first mission tested 2026-11-15: GPU about a third busy, about 5 W). See
   [Steam Deck](#steam-deck).
