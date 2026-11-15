@@ -197,6 +197,9 @@ doc.ps1 mesh`, `cbuffers`, `disasm`): the same
   through the mission's start and the tutorial's first waves: 36 of 10 347 frames over 40 ms
   (before: 466 of 2105), every one a frame waiting for a pipeline compiled for the first time
   (50 to 170 ms; stored, so not again); enemies break up into their pieces as on the console.
+  Since ReXNative 71590a6 every stored pipeline is compiled again at start-up in the background
+  and none is forgotten (before: only the last 3 sessions', and a use could be marked on
+  another record): 458 of 458 on the PC, about 3 s while the menus show.
 
 ### Steam Deck (2026-11-15)
 
