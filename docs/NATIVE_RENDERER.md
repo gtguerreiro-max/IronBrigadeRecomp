@@ -150,7 +150,8 @@ At the same moment of the first mission (the same route, `scripts\live.ps1`), tw
   likely why this port needs `rov` (the note on 7e3 in `config/ironbrigade.toml` predates this
   finding).
 - **Glow columns under the tentacles** (still there after that fix, the user saw them on the
-  Deck). RenderDoc on both renderers (`scriptsdoc.ps1 mesh`, `cbuffers`, `disasm`): the same
+  Deck). RenderDoc on both renderers (`scripts
+doc.ps1 mesh`, `cbuffers`, `disasm`): the same
   sprites, vertex shader outputs and constants in both; the stock renderer's are simply hidden
   by the scenery. The game draws those particles at half resolution with 4x MSAA (640x323) over
   the depth of its full-resolution 1x scene at the same EDRAM base (1364): on the Xenos the 4
@@ -170,6 +171,17 @@ At the same moment of the first mission (the same route, `scripts\live.ps1`), tw
   bit: the page stayed the GPU's for good. It now gives it back to the guest
   (`ReXNative memexport: page ... written by the guest before its watch was armed`). Not seen
   again in three runs, but the race is rare; that line will tell when it happens.
+
+- **A green house** (the user saw it on the Deck: turn left at the start of the mission, the
+  building the tutorial points to). On the PC too: a block of green shards. Its vertex shader
+  outputs were garbage, and guest memory itself held texture blocks where its vertex buffer
+  was; with the stock renderer guest memory and the GPU hold the same vertices there. Without
+  `--rexnative_memexport_readback` the house was right (and the rest of the picture dark): the
+  readback, at the next Swap, copied a level-loading memexport draw's results (texture blocks)
+  over memory the game had freed and filled with the house's vertices in between. On the
+  console the GPU's write came first and the CPU's later one wins. The readback now leaves a
+  byte the guest changed since the draw's snapshot (`ReXNative memexport: ... bytes the guest
+  wrote after a memexport draw kept`, about 100 KB while the level loads).
 
 ### Steam Deck (2026-11-15)
 
