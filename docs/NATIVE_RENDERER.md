@@ -193,7 +193,10 @@ doc.ps1 mesh`, `cbuffers`, `disasm`): the same
   copy). ReXNative now does that copy in guest memory when the game issues it and drops the
   draw (`--rexnative_gpu_memcpy`): no readback is left in the mission (the Swap 20 us on the
   PC), and the trench, the house and the factory's textures are right, also without a
-  pipeline cache. Skip the intro video with B (Backspace with `--mnk_mode`).
+  pipeline cache. Skip the intro video with B (Backspace with `--mnk_mode`). On the Deck,
+  through the mission's start and the tutorial's first waves: 36 of 10 347 frames over 40 ms
+  (before: 466 of 2105), every one a frame waiting for a pipeline compiled for the first time
+  (50 to 170 ms; stored, so not again); enemies break up into their pieces as on the console.
 
 ### Steam Deck (2026-11-15)
 
