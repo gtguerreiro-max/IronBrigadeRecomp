@@ -201,6 +201,14 @@ doc.ps1 mesh`, `cbuffers`, `disasm`): the same
   and none is forgotten (before: only the last 3 sessions', and a use could be marked on
   another record): 458 of 458 on the PC, about 3 s while the menus show.
 
+- **The settings HUD's Back + Start did nothing on the pad** (the user, on the Deck): the chord
+  reaches the HUD only through an XInputGetState hook, which only From Dust's port had. Since
+  ReXNative 4da40c1 the layer names XInputGetState (`sub_828E2E30`, the XDK's `mr r5,r4; li
+  r4,1; b XamInputGetState`) and ReXNative hooks it: Back + Start opens the menu and the game
+  does not see the chord (before, Start paused the game and Back asked to leave it). Polling the
+  input system from the Swap thread instead raced the game's own reads (heap corruption,
+  `0xC0000374`).
+
 ### Steam Deck (2026-11-15)
 
 The Windows build under GE-Proton 11 (`deck/`: `play.sh`, `ironbrigade-deck.toml`,

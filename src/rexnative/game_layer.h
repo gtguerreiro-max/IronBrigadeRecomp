@@ -39,6 +39,7 @@ inline constexpr uint32_t kFnQueryGetData = 0;  // not found; candidates (fromdu
 inline constexpr uint32_t kFnRunCommandBuffer = 0x8264EF50;  // override, override, from pgr4
 inline constexpr uint32_t kFnShaderLoad = 0x82651708;  // masked, high
 inline constexpr uint32_t kFnImmediateVs = 0x82651328;  // callgraph, high
+inline constexpr uint32_t kFnXInputGetState = 0x828E2E30;  // pattern, high
 
 // HookFn values (hook_args.h): the address, or a distinct value below 0x100 when the
 // function was not found (no hook has it).
@@ -63,6 +64,8 @@ inline constexpr uint32_t kHookQueryGetData = 0x00000002;
 #define REXNATIVE_SHADER_LOAD_FOUND 1
 #define REXNATIVE_IMMEDIATE_VS 82651328
 #define REXNATIVE_IMMEDIATE_VS_FOUND 1
+#define REXNATIVE_XINPUT_GET_STATE 828E2E30
+#define REXNATIVE_XINPUT_GET_STATE_FOUND 1
 #define REXNATIVE_SUB_(a) sub_##a
 #define REXNATIVE_SUB(a) REXNATIVE_SUB_(a)
 #define REXNATIVE_IMP_(a) __imp__sub_##a
