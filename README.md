@@ -37,8 +37,10 @@ brought up for it.
   LTCG build passes its draw arguments in other registers). The intro video plays, with its
   subtitles and the stock renderer's brightness (since 2026-11-15: Scaleform draws its frames
   with DrawIndexedVerticesUP, which ReXNative now hooks, into a gamma render target it now
-  writes in the console's gamma). Turn it on with `--rexnative=true`; off, the stock renderer
-  draws everything.
+  writes in the console's gamma). It goes on into the first mission at 30 FPS, but the
+  static scenery (towers, the base) shows bright yellow: the game draws it from recorded
+  command buffers that ReXNative does not replay yet. Turn it on with `--rexnative=true`; off,
+  the stock renderer draws everything.
 
 Details, findings and next steps: [docs/NATIVE_RENDERER.md](docs/NATIVE_RENDERER.md) and
 [docs/NOTES.md](docs/NOTES.md).

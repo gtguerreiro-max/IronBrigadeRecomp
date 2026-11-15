@@ -92,6 +92,30 @@ Debugged with ReXNative's draw log (`--rexnative_draw_log_from`), per-draw snaps
   piecewise-linear gamma (`--rexnative_gamma_targets`); the frames' average colour matches the
   stock renderer's within 1 %.
 
+### In game (2026-11-15): static scenery from recorded command buffers
+
+The route Enter 10 / 18, Space 26, Enter 32, Space 38, then Space every ~10 s from 128 s
+reaches the main menu (125 s, its 3D background drawn), the pilot selection and the first
+mission's tutorial, at 30 FPS with about 1250 draws a frame and no GPU hang. The near objects,
+the ground, the fire and the HUD are right, but the scenery behind (towers, the base, rocks) is
+bright yellow and green where the stock renderer draws it normally.
+
+Found with ReXNative's `scripts\live.ps1` (the game kept running) and a RenderDoc capture
+(`scripts\rdoc.ps1`):
+
+- At a tower pixel the depth from the depth prepass is there (event 898), but no G-buffer draw
+  touches it: what shows is an earlier full-screen pass's data. That building's mesh (381
+  indices) is drawn only in the shadow pass (8 times) and the depth prepass (13 times), in
+  ReXNative's draw log and in the guest push buffer alike.
+- The push buffer holds, besides the ring's segments, two large INDIRECT_BUFFERs into ordinary
+  memory (`09811000`, 0x93AD dwords; `09851400`, 0x6ECD): command buffers the game recorded
+  (on its second device, while the level loaded) and replays every frame with RunCommandBuffer.
+  Their G-buffer draws reach no hook, so ReXNative never draws them.
+- Not the cause: the gamma change (with `--rexnative_gamma_targets=false` the scenery is as
+  yellow and the rest darker), stencil (off: unchanged), memexport.
+
+Next: replay recorded command buffers in ReXNative (its roadmap 9).
+
 ## What was done before (hand-made port)
 
 `src/native/` was FromDustDeck's copy of PGR4Native's renderer (branch `dlss`: `dlss.cpp`,
@@ -174,8 +198,8 @@ Iron Brigade links the same XDK as From Dust (2.0.20353), but the **LTCG** D3D l
    project's own (`scripts\build.ps1 -Stage sdk`, into `build\`, not FromDustDeck's tree). Then
    find who should write that address (the guest code, `generated/`) and why it does not with
    the renderer live. Try first with the texture cache's watches disabled.
-2. Hook RunCommandBuffer (0x8264EF50, check by listing) so the second device's recorded draws
-   reach the renderer when they are replayed on the main device (PGR4 had this hook).
+2. Hook RunCommandBuffer (0x8264EF50) and replay the recorded command buffers' PM4 as native
+   draws: the static scenery's G-buffer draws are there (above, "In game"). First in order now.
 3. Find Begin/EndTiling in Iron Brigade (the scene is 1280x646 with 2x MSAA: 13 MB, more than the
    10 MB EDRAM, so it is tiled; LTCG may have inlined them into the Swap/Resolve path).
 4. ~~memexport draws, k_DXT5A textures.~~ Done in ReXNative (2026-11-15); the intro video
