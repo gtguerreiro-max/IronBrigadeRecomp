@@ -31,8 +31,9 @@ The overrides keep what this port ran with before ReXNative:
 - `CreateDevice: null`, `configure_at_first_device: true`: the tool finds CreateDevice at
   `8263E748`, but it is not hooked yet (its second caller `8260DDF8` makes a 640x480 device, a
   likely source of the second device); the device is adopted from the first Swap.
-- `RunCommandBuffer: null`: found at `8264EF50` through the PGR4 reference, not hooked yet (next
-  step 2 below).
+- `RunCommandBuffer: "8264EF50"`: found through the PGR4 reference and hooked (since
+  2026-11-15): ReXNative replays the recorded command buffers it runs (`defaults.cmdbuf`: 2,
+  below).
 - `scene` and `defaults`: the old values (PGR4's 1280-wide 2x MSAA scene, which happens to match
   Iron Brigade's 1280x646 2x MSAA; frame height 720; occlusion off).
 
@@ -114,7 +115,24 @@ Found with ReXNative's `scripts\live.ps1` (the game kept running) and a RenderDo
 - Not the cause: the gamma change (with `--rexnative_gamma_targets=false` the scenery is as
   yellow and the rest darker), stencil (off: unchanged), memexport.
 
-Next: replay recorded command buffers in ReXNative (its roadmap 9).
+Fixed the same day (ReXNative roadmap 9): RunCommandBuffer is hooked and ReXNative replays the
+buffers' PM4 (`renderer/src/native/cmd_replay.cpp` there). What the count mode
+(`--rexnative_cmdbuf=1`) showed in the first mission's tutorial:
+
+- 2 RunCommandBuffer calls a frame, both on the main device and the Swap thread, status 1
+  (ended), flags 0x81 (chunks through the push segment, not from the ring); inherit and keep
+  only the float constants (`FFFFFFFFFFFFFFFF FFFFFFFFFFFFFFFF 0 0 0`).
+- Each is one chunk of about 28 000 and 38 000 dwords: 343 predicated DRAW_INDX a frame (index
+  buffers, triangle lists and strips); before them, shader loads (IM_LOAD) and LOAD_ALU_CONSTANT
+  packets (257 of each for 157 draws in one buffer) and one WAIT_REG_MEM. No DRAW_INDX_2, no SET_BIN_* packet (the bin
+  mask from the device lets every predicated packet run), no nested INDIRECT_BUFFER, no buffer
+  rejected.
+- The buffers are recorded again every pass (BeginCommandBuffer 8264E720, EndCommandBuffer
+  8264EB30), in new memory: their addresses change from one frame to the next.
+
+With `--rexnative_cmdbuf=2` (now the layer's default) the scenery is drawn as with the stock
+renderer: all 343 draws, about 0.5 ms of decoding a frame, 30 FPS, no warning. draw-debug.txt
+4096 (skip the replayed draws) brings the yellow back; 8192 draws only them.
 
 ## What was done before (hand-made port)
 
@@ -198,8 +216,9 @@ Iron Brigade links the same XDK as From Dust (2.0.20353), but the **LTCG** D3D l
    project's own (`scripts\build.ps1 -Stage sdk`, into `build\`, not FromDustDeck's tree). Then
    find who should write that address (the guest code, `generated/`) and why it does not with
    the renderer live. Try first with the texture cache's watches disabled.
-2. Hook RunCommandBuffer (0x8264EF50) and replay the recorded command buffers' PM4 as native
-   draws: the static scenery's G-buffer draws are there (above, "In game"). First in order now.
+2. ~~Hook RunCommandBuffer (0x8264EF50) and replay the recorded command buffers' PM4 as native
+   draws.~~ Done (2026-11-15, above, "In game"). Next: play the first mission through with
+   ReXNative against the stock renderer, then turn ReXNative on by default.
 3. Find Begin/EndTiling in Iron Brigade (the scene is 1280x646 with 2x MSAA: 13 MB, more than the
    10 MB EDRAM, so it is tiled; LTCG may have inlined them into the Swap/Resolve path).
 4. ~~memexport draws, k_DXT5A textures.~~ Done in ReXNative (2026-11-15); the intro video

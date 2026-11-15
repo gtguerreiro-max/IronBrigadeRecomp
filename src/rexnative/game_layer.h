@@ -36,7 +36,7 @@ inline constexpr uint32_t kFnBeginTiling = 0;  // not found; candidates (fromdus
 inline constexpr uint32_t kFnEndTiling = 0;  // not found; candidates (fromdust): 8264E720 listing 0.36, 828EC848 listing 0.28, 8264EB30 listing 0.26
 inline constexpr uint32_t kFnQueryIssue = 0;  // not found; candidates (fromdust): 8263EAB8 listing 0.35, 8264F650 listing 0.31, 828ED040 listing 0.27
 inline constexpr uint32_t kFnQueryGetData = 0;  // not found; candidates (fromdust): 8266E960 listing 0.29, 828DABF8 listing 0.25, 828DFEE8 listing 0.19
-inline constexpr uint32_t kFnRunCommandBuffer = 0;  // not found; overrides.json
+inline constexpr uint32_t kFnRunCommandBuffer = 0x8264EF50;  // override, override, from pgr4
 inline constexpr uint32_t kFnShaderLoad = 0x82651708;  // masked, high
 inline constexpr uint32_t kFnImmediateVs = 0x82651328;  // callgraph, high
 
@@ -54,9 +54,9 @@ inline constexpr uint32_t kHookClearF = 0x82648A20;
 inline constexpr uint32_t kHookClear = 0x82648960;
 inline constexpr uint32_t kHookResolve = 0x82649280;
 inline constexpr uint32_t kHookSwap = 0x82646ED8;
-inline constexpr uint32_t kHookRunCommandBuffer = 0x00000001;
-inline constexpr uint32_t kHookQueryIssue = 0x00000002;
-inline constexpr uint32_t kHookQueryGetData = 0x00000003;
+inline constexpr uint32_t kHookRunCommandBuffer = 0x8264EF50;
+inline constexpr uint32_t kHookQueryIssue = 0x00000001;
+inline constexpr uint32_t kHookQueryGetData = 0x00000002;
 
 // Hooked by symbol (REX_HOOK_RAW / REX_EXTERN take sub_XXXXXXXX tokens).
 #define REXNATIVE_SHADER_LOAD 82651708
@@ -143,11 +143,13 @@ inline constexpr uint32_t kGameFrameHeight = 720;
 #define REXNATIVE_SCENE_AUTO 0
 
 // Defaults of the game's options (rexnative, rexnative_render_height,
-// rexnative_occlusion, rexnative_display_aspect).
+// rexnative_occlusion, rexnative_display_aspect, rexnative_cmdbuf).
 // kDefaultEnabled: ReXNative draws and presents the game unless --rexnative=false.
 inline constexpr bool kDefaultEnabled = false;
 inline constexpr int32_t kDefaultRenderHeight = 720;
 inline constexpr bool kDefaultOcclusion = false;
 inline constexpr double kDefaultDisplayAspect = 16.0 / 9.0;
+// kDefaultCmdBuf: recorded command buffers (RunCommandBuffer): 0 off, 1 count, 2 replay.
+inline constexpr int32_t kDefaultCmdBuf = 2;
 
 }  // namespace rexnative::game

@@ -125,6 +125,7 @@ D3D_FN(8264DB70, "DrawVertices", kDraw)  // fuzzy high
 D3D_FN(8264DF88, "DrawIndexedVertices", kDraw)  // fuzzy high
 D3D_FN(8264E720, "fn_826D5D20", kOther)  // callees medium pgr4
 D3D_FN(8264EB30, "fn_826D6468", kOther)  // callees medium pgr4
+D3D_FN(8264EF50, "fn_826D6610", kOther)  // callees medium pgr4
 D3D_FN(82658708, "DrawIndx2Split", kDraw)  // callees high
 D3D_FN(8265C7E8, "fn_826D1AC8", kOther)  // callgraph high
 D3D_FN(828E2100, "fn_826C8858", kOther)  // region high

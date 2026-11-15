@@ -1,8 +1,8 @@
 {
- "_comment": "Iron Brigade's choices over the generated layer (python -m rexnative adapt). The game drives a second device while loading: only Swap's is followed. CreateDevice (8263E748) and RunCommandBuffer (8264EF50) are found but not hooked yet (the hand-made port had neither): the device is adopted from the first Swap. Scene and defaults: the values the port ran with before ReXNative. enabled false: ReXNative is off by default here (the first 3D frames hang the GPU, docs/NATIVE_RENDERER.md); --rexnative=true turns it on.",
+ "_comment": "Iron Brigade's choices over the generated layer (python -m rexnative adapt). The game drives a second device while loading: only Swap's is followed. CreateDevice (8263E748) is found but not hooked (the hand-made port did not hook it): the device is adopted from the first Swap. RunCommandBuffer (8264EF50) is hooked: the static scenery's G-buffer draws are in recorded command buffers it sends through INDIRECT_BUFFER packets no other hook sees; ReXNative replays them with cmdbuf 2, the default since it was tested in the first mission (1 only counts and logs them; 0 off). The buffers are re-recorded each pass (BeginCommandBuffer, draws, EndCommandBuffer, RunCommandBuffer, then handed back). 8264E720 and 8264EB30 are BeginCommandBuffer and EndCommandBuffer, never BeginTiling / EndTiling (game_layer.h lists them as candidates for those). Scene and defaults: the values the port ran with before ReXNative. enabled false: ReXNative is off by default here (the first 3D frames hang the GPU, docs/NATIVE_RENDERER.md); --rexnative=true turns it on.",
  "functions": {
   "CreateDevice": null,
-  "RunCommandBuffer": null
+  "RunCommandBuffer": "8264EF50"
  },
  "devices": {
   "follow_swap_device_only": true,
@@ -19,6 +19,7 @@
   "enabled": false,
   "render_height": 720,
   "occlusion": false,
-  "display_aspect": "16.0 / 9.0"
+  "display_aspect": "16.0 / 9.0",
+  "cmdbuf": 2
  }
 }
