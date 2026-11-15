@@ -5,6 +5,7 @@
 **The Xbox 360 (XBLA) version of Iron Brigade, recompiled into a native Windows program.**
 
 ![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D6?logo=windows&logoColor=white)
+![Steam Deck](https://img.shields.io/badge/Steam%20Deck-30%20FPS%20(Proton)-1A9FFF?logo=steamdeck&logoColor=white)
 ![Status](https://img.shields.io/badge/status-work%20in%20progress-orange)
 ![Game files](https://img.shields.io/badge/game%20files-not%20included-lightgrey)
 
@@ -39,8 +40,13 @@ brought up for it.
   with DrawIndexedVerticesUP, which ReXNative now hooks, into a gamma render target it now
   writes in the console's gamma). It goes on into the first mission at 30 FPS with its
   static scenery (towers, the base), which the game draws from recorded command buffers that
-  ReXNative replays since 2026-11-15 (before, it showed bright yellow). Turn it on with
-  `--rexnative=true`; off, the stock renderer draws everything.
+  ReXNative replays since 2026-11-15 (before, it showed bright yellow). Its light and
+  particles blend in linear color into the game's gamma targets, as on the console (before,
+  the glows came out far too bright). Turn it on with `--rexnative=true`; off, the stock
+  renderer draws everything.
+- **Steam Deck: plays at the game's 30 FPS** with ReXNative, the Windows build under Proton
+  (first mission tested 2026-11-15: GPU about a third busy, about 5 W). See
+  [Steam Deck](#steam-deck).
 
 Details, findings and next steps: [docs/NATIVE_RENDERER.md](docs/NATIVE_RENDERER.md) and
 [docs/NOTES.md](docs/NOTES.md).
@@ -87,6 +93,25 @@ and `d3d_surface.inc`, written by ReXNative's tool from this game's generated co
 Run `build\IronBrigade\ironbrigade.exe`. Settings are in `ironbrigade.toml` beside it, and a
 command-line flag (`--name=value`) overrides one for a session. A pad works; with
 `--mnk_mode=true` the keyboard does (Return = Start, Space = A).
+
+## Steam Deck
+
+The Windows build runs under Proton with ReXNative (D3D12 through vkd3d-proton), as
+[FromDustDeck](https://github.com/gtguerreiro-max/FromDustDeck) does:
+
+1. Copy `build\IronBrigade` to the Deck without the NVIDIA DLLs (`nvngx_*.dll`) and the
+   `live\`, `logs\` and `userdata\cache\` folders, for example to `~/Games/IronBrigade`, with
+   `game\` (the game's data) and `userdata\` (the add-on and your save).
+2. Put the files of `deck/` beside `ironbrigade.exe`: `play.sh` starts Proton (GE-Proton 11,
+   else Valve's Proton 11.0) with a prefix of its own; `ironbrigade-deck.toml` becomes the
+   game's settings (1280x800 full screen, the game's 16:9 picture, ReXNative on);
+   `install.sh` installs them and adds "Iron Brigade" to Steam's library (Steam must be
+   closed; artwork from an `art/` folder beside it: `portrait.png`, `grid.png`, `hero.png`,
+   `logo.png`, `icon.png`).
+3. Run `install.sh` in a terminal, then start the game from Steam. Do not give the shortcut a
+   compatibility tool: `play.sh` runs Proton itself.
+
+The pad works through Steam Input; **F1** or Back + Start opens ReXNative's settings menu.
 
 ## Credits
 

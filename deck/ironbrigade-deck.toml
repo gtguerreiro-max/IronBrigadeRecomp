@@ -1,0 +1,31 @@
+# Iron Brigade (ReXGlue port) on the Steam Deck, under Proton, with ReXNative's native D3D12
+# renderer. install.sh copies it beside ironbrigade.exe as ironbrigade.toml; read at every
+# start; a command line flag (`--name=value`) overrides a setting for that session.
+
+# Window: the Deck's 1280x800 panel, full screen; the game's 16:9 picture with bars above and
+# below. The video mode the game is told about stays the console's 1280x720.
+window_width = 1280
+window_height = 800
+fullscreen = true
+resolution = "720p"
+
+# ReXNative draws and presents the game (no EDRAM emulation, each draw once); the Xenos plugin
+# only runs the GPU's fences and interrupts. The static scenery's recorded command buffers are
+# replayed (the layer's default, rexnative_cmdbuf = 2).
+gpu_plugin = "xenos"
+rexnative = true
+
+# The settings menu: F1, or Back+Start on the pad (ReXNative's HUD). Its changes are saved here.
+
+# Textures: anisotropic filtering (the ground is seen at grazing angles). The native renderer's
+# own setting; anisotropic_override is the Xenos plugin's.
+rexnative_anisotropy = 8
+anisotropic_override = 5
+
+# The full game's license (XBLA titles check it; 0 runs the trial).
+license_mask = 1
+
+# Pacing and wake-ups from the SDK's Deck patches (FromDustDeck's patches/deck).
+gpu_vblank_deadline_timer = true
+gpu_wait_reg_mem_high_res = true
+gpu_ring_wake_fast = true

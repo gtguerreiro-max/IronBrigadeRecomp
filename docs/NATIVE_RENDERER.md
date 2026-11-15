@@ -134,6 +134,44 @@ With `--rexnative_cmdbuf=2` (now the layer's default) the scenery is drawn as wi
 renderer: all 343 draws, about 0.5 ms of decoding a frame, 30 FPS, no warning. draw-debug.txt
 4096 (skip the replayed draws) brings the yellow back; 8192 draws only them.
 
+### Compared with the stock renderer (2026-11-15, evening)
+
+At the same moment of the first mission (the same route, `scripts\live.ps1`), two differences:
+
+- **Glows far too bright** (purple columns under the three tentacle towers, an orange haze
+  around the fires, the soldier lit blue). Every colour target of the mission is
+  `k_8_8_8_8_GAMMA` (the G-buffer and the light accumulation; no 7e3 target is used there).
+  ReXNative wrote them by converting the pixel shader's colour to the console's PWL gamma, so
+  additive light and particles blended in gamma space, where gamma(a) + gamma(b) is far more
+  than gamma(a + b); the console's render backend blends in linear colour. A draw that blends
+  into a gamma target now goes through an sRGB view of it (the host blends in linear colour,
+  with the sRGB curve, close to the PWL one); draws without blending still write exact PWL
+  bytes. The stock renderer's default `rtv` path makes the same approximation, which is most
+  likely why this port needs `rov` (the note on 7e3 in `config/ironbrigade.toml` predates this
+  finding). Still a little brighter than the stock renderer: a vertical trail under the
+  tentacles' sparks, drawn into a half-resolution particle target whose depth the game clears
+  to 0 (nothing hides those particles there; the composite that adds them reads the scene's
+  depth). Not resolved.
+- **Huge stretched triangles** (yellow and black) instead of the mobile trench, once in five
+  runs, staying until the game exits. The GPU's copy of the trench's vertex buffer was zeros
+  while guest memory held the vertices (RenderDoc's buffer contents against the process's
+  memory). The level loading runs memexport draws (one vertex shader writes k_16_16_16_16
+  blocks the game then uses as textures), and ReXNative leaves the pages a memexport draw
+  writes to the GPU until a CPU write faults on them. A CPU write between the copy and the
+  arming of the page's watch never faults, and the watch thread only cleared the page's valid
+  bit: the page stayed the GPU's for good. It now gives it back to the guest
+  (`ReXNative memexport: page ... written by the guest before its watch was armed`). Not seen
+  again in three runs, but the race is rare; that line will tell when it happens.
+
+### Steam Deck (2026-11-15)
+
+The Windows build under GE-Proton 11 (`deck/`: `play.sh`, `ironbrigade-deck.toml`,
+`install.sh`), started from Steam in Game Mode: D3D12 on the Deck's GPU (AMD VANGOGH) through
+vkd3d-proton, the intro video, the menus and the first mission at the game's 30 FPS (frames of
+33 to 34.7 ms, 1400 to 1600 draws), the recorded scenery replayed (295 draws), the GPU about a
+third busy and about 5 W for the whole APU. Driven for the test with `xdotool` and a temporary
+`mnk_mode = true`; screenshots with `gamescopectl screenshot`.
+
 ## What was done before (hand-made port)
 
 `src/native/` was FromDustDeck's copy of PGR4Native's renderer (branch `dlss`: `dlss.cpp`,
