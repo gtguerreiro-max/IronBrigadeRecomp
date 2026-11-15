@@ -24,6 +24,8 @@ inline constexpr uint32_t kFnMakeSpace = 0x826403C8;  // callgraph, high
 inline constexpr uint32_t kFnBeginVertices = 0x8264D078;  // masked, high
 inline constexpr uint32_t kFnRestorePush = 0x8264D538;  // exact, high
 inline constexpr uint32_t kFnDrawVerticesUP = 0x8264D548;  // masked, high
+inline constexpr uint32_t kFnBeginIndexedVertices = 0x8264D590;  // position, high
+inline constexpr uint32_t kFnDrawIndexedVerticesUP = 0x8264DAD0;  // position, high
 inline constexpr uint32_t kFnDrawVertices = 0x8264DB70;  // fuzzy, high
 inline constexpr uint32_t kFnDrawIndexedVertices = 0x8264DF88;  // fuzzy, high
 inline constexpr uint32_t kFnDrawIndx2Inline = 0x82647830;  // masked, high
@@ -42,6 +44,8 @@ inline constexpr uint32_t kFnImmediateVs = 0x82651328;  // callgraph, high
 // function was not found (no hook has it).
 inline constexpr uint32_t kHookBeginVertices = 0x8264D078;
 inline constexpr uint32_t kHookDrawVerticesUP = 0x8264D548;
+inline constexpr uint32_t kHookBeginIndexedVertices = 0x8264D590;
+inline constexpr uint32_t kHookDrawIndexedVerticesUP = 0x8264DAD0;
 inline constexpr uint32_t kHookDrawVertices = 0x8264DB70;
 inline constexpr uint32_t kHookDrawIndexedVertices = 0x8264DF88;
 inline constexpr uint32_t kHookDrawIndx2Inline = 0x82647830;

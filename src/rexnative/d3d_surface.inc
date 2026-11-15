@@ -119,6 +119,8 @@ D3D_FN(8264CFA0, "fn_826CA598", kOther)  // neighbour medium
 D3D_FN(8264D078, "BeginVertices", kDraw)  // masked high
 D3D_FN(8264D538, "RestorePush", kPush)  // exact high
 D3D_FN(8264D548, "DrawVerticesUP", kDraw)  // masked high
+D3D_FN(8264D590, "BeginIndexedVertices", kDraw)  // position high hook
+D3D_FN(8264DAD0, "DrawIndexedVerticesUP", kDraw)  // position high hook
 D3D_FN(8264DB70, "DrawVertices", kDraw)  // fuzzy high
 D3D_FN(8264DF88, "DrawIndexedVertices", kDraw)  // fuzzy high
 D3D_FN(8264E720, "fn_826D5D20", kOther)  // callees medium pgr4

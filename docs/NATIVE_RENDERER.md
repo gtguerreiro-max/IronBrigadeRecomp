@@ -67,9 +67,30 @@ ReXNative's tool now derives every hooked draw's argument registers (`kArgsDrawI
 {3, 4, 0, 5, 6, ...}`, `kArgsDrawVertices = {3, 4, 0, 5, ...}` in `src/rexnative/game_layer.h`)
 and the hooks put them in the public order (`PublicRegs`). With that, on the same route the game
 plays its intro at a steady 30 FPS for minutes (no TDR, no WAIT_REG_MEM hang): the subtitles are
-drawn, the video itself is black. The log says `memexport unsupported (draw skipped)` once: the
-video's frames come from a memexport draw, which ReXNative does not run yet (its roadmap item 8).
-Also `unsupported format k_DXT5A` (one 128x128 texture).
+drawn, the video itself is black. The log said `memexport unsupported (draw skipped)` once, so
+the video was first put down to a memexport draw; ReXNative runs those now (its roadmap item 8)
+and reads k_DXT5A as BC4, and the video stayed black.
+
+### The intro video (fixed 2026-11-15)
+
+Debugged with ReXNative's draw log (`--rexnative_draw_log_from`), per-draw snapshots
+(`draw-debug.txt`, mask 256) and a push-buffer trace (`--rexnative_d3d_control`, `tap on` /
+`trace`):
+
+- Bink decodes on the CPU into three k_8 planes (Y 1280x720 at `088A6000`, chroma 640x360) that
+  the texture cache re-uploads every frame. The YUV-to-RGB draw (DrawVertices) does produce the
+  picture: once into a 1280x720 target, resolved to `08A68000`, and once into the scene target.
+- Scaleform's subtitle movie then draws an opaque black rectangle over the whole screen
+  (DrawVerticesUP, twips 25600x14400), then the resolved frame `08A68000` as a bitmap: a
+  30-index mesh with inline vertices and indices, from **DrawIndexedVerticesUP** (`8264DAD0`,
+  which calls **BeginIndexedVertices** `8264D590`). The trace showed that draw with no hooked
+  call behind it: ReXNative never drew it, so only the black rectangle and the text were left.
+- ReXNative now hooks both (the layer's `kFnBeginIndexedVertices` / `kFnDrawIndexedVerticesUP`,
+  found by their place between DrawVerticesUP and DrawVertices) and reads the inline indices.
+- The picture was then half as bright as with the stock renderer: the scene target is
+  `k_8_8_8_8_GAMMA`, which ReXNative wrote with linear values. It now writes the console's
+  piecewise-linear gamma (`--rexnative_gamma_targets`); the frames' average colour matches the
+  stock renderer's within 1 %.
 
 ## What was done before (hand-made port)
 
@@ -142,9 +163,9 @@ Iron Brigade links the same XDK as From Dust (2.0.20353), but the **LTCG** D3D l
   memory almost nowhere (MarkAllDirty only), so the suspects are its texture write-watches on
   guest physical memory (`TextureCache::ArmWatches`; a CPU or DMA write the game uses as the
   WAIT_REG_MEM's flag landing on a watched page) or the second device's recorded commands.
-- Other gaps logged: `memexport unsupported (draw skipped)`, `unsupported format k_DXT5A`, the
-  title screen's background (a movie / dynamic texture) not drawn, the loading screen's
-  background white.
+- Other gaps logged: `memexport unsupported (draw skipped)`, `unsupported format k_DXT5A`
+  (both handled since), the title screen's background (a movie / dynamic texture) not drawn,
+  the loading screen's background white.
 
 ## Next steps, in order
 
@@ -157,7 +178,8 @@ Iron Brigade links the same XDK as From Dust (2.0.20353), but the **LTCG** D3D l
    reach the renderer when they are replayed on the main device (PGR4 had this hook).
 3. Find Begin/EndTiling in Iron Brigade (the scene is 1280x646 with 2x MSAA: 13 MB, more than the
    10 MB EDRAM, so it is tiled; LTCG may have inlined them into the Swap/Resolve path).
-4. memexport draws, k_DXT5A textures.
+4. ~~memexport draws, k_DXT5A textures.~~ Done in ReXNative (2026-11-15); the intro video
+   needed DrawIndexedVerticesUP and gamma targets instead (above).
 5. Then DLAA (`rexnative_upscaler=true`, `rexnative_dlss_mode=dlaa`) and DLSS 5
    (`rexnative_dlss5=true`). DLSS 5 must run on the HDR scene **before** the game's tone mapping
    / colour grading (`rexnative_dlss5_stage = "scene"`); Iron Brigade renders its scene in the

@@ -34,10 +34,11 @@ brought up for it.
 - **Native renderer (ReXNative, with DLAA / DLSS / DLSS 5 and a settings menu): in progress.**
   It draws the warning, logo and title screens and opens its settings menu (**F1**), and the
   game goes on into its intro (the GPU hang the first 3D frames used to cause is fixed: this
-  LTCG build passes its draw arguments in other registers). The intro video is still black, with
-  its subtitles drawn: its frames come from a draw that writes memory (memexport), which ReXNative
-  does not run yet. Turn it on with `--rexnative=true`; off, the stock renderer draws
-  everything.
+  LTCG build passes its draw arguments in other registers). The intro video plays, with its
+  subtitles and the stock renderer's brightness (since 2026-11-15: Scaleform draws its frames
+  with DrawIndexedVerticesUP, which ReXNative now hooks, into a gamma render target it now
+  writes in the console's gamma). Turn it on with `--rexnative=true`; off, the stock renderer
+  draws everything.
 
 Details, findings and next steps: [docs/NATIVE_RENDERER.md](docs/NATIVE_RENDERER.md) and
 [docs/NOTES.md](docs/NOTES.md).
