@@ -183,6 +183,18 @@ doc.ps1 mesh`, `cbuffers`, `disasm`): the same
   byte the guest changed since the draw's snapshot (`ReXNative memexport: ... bytes the guest
   wrote after a memexport draw kept`, about 100 KB while the level loads).
 
+- **Stutter and stale meshes: the engine's GPU memory copies.** On the Deck 17% of the
+  mission's frames took over 36 ms: the Swap waited 7 to 17 ms for the GPU to read back what
+  memexport draws wrote. In the mission the only memexport shader is a copy of 64-byte blocks
+  (ucode 71B69663FD98B9E5: 8 x k_16_16_16_16 fetched and exported unchanged), which the engine
+  issues about 140 times a frame to move resources, to some 25 000 places in 3 minutes. The
+  trench's and the house's vertex buffers are destinations of such copies, and came out stale
+  on the GPU at random (more often while pipelines compiled: a skipped memexport draw lost its
+  copy). ReXNative now does that copy in guest memory when the game issues it and drops the
+  draw (`--rexnative_gpu_memcpy`): no readback is left in the mission (the Swap 20 us on the
+  PC), and the trench, the house and the factory's textures are right, also without a
+  pipeline cache. Skip the intro video with B (Backspace with `--mnk_mode`).
+
 ### Steam Deck (2026-11-15)
 
 The Windows build under GE-Proton 11 (`deck/`: `play.sh`, `ironbrigade-deck.toml`,
