@@ -54,7 +54,7 @@ def write_manifest():
         "",
         "[project]",
         'name = "ironbrigade"',
-        'sdk_version = "0.10.1"',
+        'sdk_version = "0.11.0"',
         'game_root = "game-data"',
         "",
         "[entrypoint]",
@@ -92,6 +92,19 @@ def main():
             return 0
         targets = [int(t, 16) for t in re.findall(r"^\s+(0x[0-9A-Fa-f]+) from 0x[0-9A-Fa-f]+:",
                                                     log, re.M)]
+        # ReXGlue v0.11 finds every copy of the millicode helpers (__savegprlr_N and the rest)
+        # and refuses a function hint at one: such hints go, with the ones around them (codegen
+        # stops at the first; a run is up to 64 entries of 4 or 8 bytes).
+        millicode = [int(a, 16) for a in re.findall(
+            r"function (0x[0-9A-Fa-f]+) is millicode, which no config entry may replace", log)]
+        if millicode:
+            hints = load_hints()
+            gone = [h for h in hints if any(abs(h - m) <= 0x200 for m in millicode)]
+            for h in gone:
+                del hints[h]
+            save_hints(hints)
+            print(f"round {rnd}: {len(gone)} hints at millicode helpers removed")
+            continue
         if not targets:
             print(log[-3000:])
             print(f"round {rnd}: codegen failed with nothing to hint")

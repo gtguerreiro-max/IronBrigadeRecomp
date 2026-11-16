@@ -3,7 +3,7 @@
 
 [project]
 name = "ironbrigade"
-sdk_version = "0.10.1"
+sdk_version = "0.11.0"
 game_root = "game-data"
 
 [entrypoint]
@@ -107,10 +107,6 @@ reserved_as_local = true
 0x82720C50 = {}
 0x82740000 = {}
 0x827442B0 = {}
-0x8277E360 = {}
-0x8277E3B0 = {}
-0x82780250 = {}
-0x8278029C = {}
 0x82858E10 = {}
 0x82858E38 = {}
 0x82858E60 = {}
@@ -135,7 +131,6 @@ reserved_as_local = true
 0x82A42F2C = {}
 0x82A42FD8 = {}
 0x82A43044 = {}
-0x82A4D938 = {}
 0x82A5D520 = {}
 0x82A5F8B0 = {}
 0x82A5F8B8 = {}

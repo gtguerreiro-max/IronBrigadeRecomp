@@ -59,12 +59,13 @@ Details, findings and next steps: [docs/NATIVE_RENDERER.md](docs/NATIVE_RENDERER
   [FromDustRecomp's](https://github.com/gtguerreiro-max/FromDustRecomp) `tools/stfs_extract.py`
   does it). The add-on, if you have it, goes in
   `dlc-data\0000000000000000\58410A95\00000002\<package name>\`.
-- **A Windows 10/11 PC**: Visual Studio 2022 Build Tools (clang-cl, lld, Windows SDK), CMake
-  3.25+, Ninja, Python 3 and Git.
+- **A Windows 10/11 PC**: Visual Studio 2022 Build Tools (the C++ workload: Windows SDK and
+  MSVC libraries), LLVM 20 (clang++ and lld; `REXNATIVE_LLVM` names its `bin` folder, or pass
+  `-Llvm`), the Vulkan SDK, CMake 3.25+, Ninja, Python 3 and Git.
 - For the native renderer: the [AMD FidelityFX SDK](https://github.com/GPUOpen-LibrariesAndSDKs/FidelityFX-SDK)
   v2.4.0 (commit `7539ae8`: FSR 4.1.2, FSR 3.1.6, Frame Generation 4.0.2, whose signed DLLs ship
   beside the game) and NVIDIA's DLSS SDK headers. Their paths are CMake cache
-  variables (`IB_FIDELITYFX_SDK`, default `build/fidelityfx-sdk2`; `IB_DLSS_SDK`, `IB_DLSS_NR`).
+  variables (`IB_FIDELITYFX_SDK`, default `build/fidelityfx-sdk`; `IB_DLSS_SDK`, `IB_DLSS_NR`).
   Build with `-DIRONBRIGADE_NATIVE=OFF` to leave it out.
 
 ## Build
@@ -76,14 +77,14 @@ cd IronBrigadeRecomp
 scripts\build.ps1 -CopyGame
 ```
 
-The first build fetches the ReXGlue SDK at the commit in `patches/rexglue.lock`, applies
-`patches/deck` (PGR4Native's generic patches) and `patches/shared` (the renderer support from
-From Dust's port), builds it, generates the game's code (`tools/gen_manifest.py`, which adds a
-function hint for each branch target codegen reports) and builds the game into
-`build\IronBrigade`. The same SDK can be built with ReXNative's
-`third_party\ReXNative\scripts\build-sdk.ps1`, or reused from another port with
-`-SdkInstall <its sdk-install>`. After a change to the port itself,
-`scripts\build.ps1 -Stage game,install` is enough.
+The port runs on ReXGlue v0.11. The first build makes the SDK with ReXNative's
+`third_party\ReXNative\scripts\build-sdk.ps1` (ReXGlue v0.11.0 with ReXNative's
+`sdk/patches/v0.11`: the host renderer's side of the Xenos driver, codegen, kernel and audio
+fixes), generates the game's code (`tools/gen_manifest.py`, which adds a function hint for each
+branch target codegen reports) and builds the game into `build\IronBrigade`. An SDK built
+already (the same lock and patches) is reused with `-SdkInstall <its sdk-install> -SdkSrc <its
+source tree>`. After a change to the port itself, `scripts\build.ps1 -Stage game,install` is
+enough.
 
 The native renderer comes from the `third_party/ReXNative` submodule (or a ReXNative checkout
 beside this folder). Everything specific to Iron Brigade is in `src/rexnative/`: `game_layer.h`
@@ -126,7 +127,7 @@ or with `PROTON_FSR4_UPGRADE=0` in a `deck.env` beside `play.sh`, it is FSR 3.1.
 - [ReXNative](https://github.com/gtguerreiro-max/ReXNative): the native D3D12 renderer and its
   settings menu (MIT), built from the `third_party/ReXNative` submodule.
 - [PGR4Native](https://github.com/shaunsingh/pgr4-native): where that renderer comes from, and
-  the generic SDK patches.
+  the generic SDK patches (ported to v0.11 in ReXNative's `sdk/patches`).
 - [FromDustDeck](https://github.com/gtguerreiro-max/FromDustDeck): the port this one follows
   (build scripts, SDK changes, the renderer's first adaptation).
 - Xenia Canary's community patches for this game (xenia-canary/game-patches) and Xenia's

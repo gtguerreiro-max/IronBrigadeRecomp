@@ -1,7 +1,5 @@
-// ironbrigade - ReXGlue Recompiled Project
-
-#include "generated/default/ironbrigade_init.h"
+// ironbrigade - ReXGlue port of Iron Brigade (XBLA, title 58410A95)
 
 #include "ironbrigade_app.h"
 
-REX_DEFINE_APP(ironbrigade, IronbrigadeApp::Create)
+REX_TITLE_APP(IronbrigadeApp)

@@ -1,26 +1,26 @@
 # Iron Brigade (ReXGlue port) settings for Windows. Read from beside ironbrigade.exe at every
-# start; a flag on the command line (--name=value) overrides the same setting for that session.
+# start; an option on the command line (--section.name=value) overrides the same setting for that
+# session.
 
+[ui]
 window_width = 1920
 window_height = 1080
 fullscreen = false
 
 # The full game's license (XBLA titles check it; 0 runs the trial).
+[kernel]
 license_mask = 1
 
-# Stock renderer: the Xenos GPU plugin (rexgpu-xenos.dll, Xenia's D3D12 backend).
-gpu_plugin = "xenos"
-
+[gpu]
+vsync = true
 # Xenia's compatibility report (xenia-project/game-compatibility#1238): black shading on NVIDIA
 # goes away with anisotropic filtering forced. 5 = 16x.
 anisotropic_override = 5
 
-present_effect = "fsr"
-vsync = true
-d3d12_pipeline_creation_threads = -1
-
+[gpu.d3d12]
+pipeline_creation_threads = -1
 # Render targets through rasterizer-ordered views: Xenia's exact emulation of the Xbox's EDRAM
 # formats. Iron Brigade renders its scene in the 7e3 (k_2_10_10_10_FLOAT) HDR format; the default
 # "rtv" path approximates it with float16 targets and the picture came out far too bright
 # (washed out to white in the first mission). With "rov" it matches the console.
-render_target_path_d3d12 = "rov"
+render_target_path = "rov"
