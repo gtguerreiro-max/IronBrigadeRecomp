@@ -114,6 +114,10 @@ The Windows build runs under Proton with ReXNative (D3D12 through vkd3d-proton),
    compatibility tool: `play.sh` runs Proton itself.
 
 The pad works through Steam Input; **F1** or Back + Start opens ReXNative's settings menu.
+Its upscaler (off by default) runs **FSR 4.1** on the Deck: `play.sh` sets
+`PROTON_FSR4_UPGRADE=1`, with which GE-Proton puts AMD's `amdxcffx64.dll` in the prefix the first
+time (tested 2026-11-16: "ReXNative upscaler: 4.1.2" in the game's log); under Valve's Proton,
+or with `PROTON_FSR4_UPGRADE=0` in a `deck.env` beside `play.sh`, it is FSR 3.1.
 
 ## Credits
 
