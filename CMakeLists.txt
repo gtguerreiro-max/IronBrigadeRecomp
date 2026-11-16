@@ -47,7 +47,7 @@ if(WIN32 AND IRONBRIGADE_NATIVE)
     set(IB_REXGLUE_SDK_SRC "${CMAKE_CURRENT_SOURCE_DIR}/build/rexglue-sdk" CACHE PATH
         "The source tree the ReXGlue SDK was built from")
     set(IB_FIDELITYFX_SDK "${CMAKE_CURRENT_SOURCE_DIR}/build/fidelityfx-sdk2" CACHE PATH
-        "AMD FidelityFX SDK v2.3.0 (60f4ea8, as PGR4Native's scripts/fidelityfx.lock)")
+        "AMD FSR (FidelityFX) SDK v2.4.0 (7539ae8, ReXNative's sdk/fidelityfx.lock)")
     set(IB_DLSS_SDK "F:/PGR4Native/third_party/dlss_sdk" CACHE PATH "NVIDIA DLSS SDK")
     set(IB_DLSS_NR "F:/PGR4Native/third_party/dlss_nr" CACHE PATH "NVIDIA DLSS 5 headers")
     include("${IRONBRIGADE_REXNATIVE_DIR}/renderer/rexnative.cmake")

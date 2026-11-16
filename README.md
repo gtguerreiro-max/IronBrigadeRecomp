@@ -62,7 +62,8 @@ Details, findings and next steps: [docs/NATIVE_RENDERER.md](docs/NATIVE_RENDERER
 - **A Windows 10/11 PC**: Visual Studio 2022 Build Tools (clang-cl, lld, Windows SDK), CMake
   3.25+, Ninja, Python 3 and Git.
 - For the native renderer: the [AMD FidelityFX SDK](https://github.com/GPUOpen-LibrariesAndSDKs/FidelityFX-SDK)
-  2.x headers (commit `60f4ea8`) and NVIDIA's DLSS SDK headers. Their paths are CMake cache
+  v2.4.0 (commit `7539ae8`: FSR 4.1.2, FSR 3.1.6, Frame Generation 4.0.2, whose signed DLLs ship
+  beside the game) and NVIDIA's DLSS SDK headers. Their paths are CMake cache
   variables (`IB_FIDELITYFX_SDK`, default `build/fidelityfx-sdk2`; `IB_DLSS_SDK`, `IB_DLSS_NR`).
   Build with `-DIRONBRIGADE_NATIVE=OFF` to leave it out.
 
