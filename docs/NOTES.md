@@ -68,7 +68,8 @@ After two passes (156 hints) the game runs to the first mission without an unreg
   selection, and the first mission ("The Fighting Trenches") playable, with the tutorial prompts.
 - **Picture too bright with the default render-target path**: the scene is rendered in the 7e3
   HDR format (k_2_10_10_10_FLOAT) and the "rtv" path's float16 approximation washed the first
-  mission out to white. `render_target_path_d3d12 = "rov"` (Xenia's exact EDRAM emulation) gives
+  mission out to white. `render_target_path = "rov"` in `[gpu.d3d12]` (before v0.11,
+  `render_target_path_d3d12`: Xenia's exact EDRAM emulation) gives
   the console's picture; it is the default in `config/ironbrigade.toml`. Some banding in the smoke.
 - Input: keyboard with `--mnk_mode=true` (Enter = Start, Space = A) or an Xbox pad (SDL).
 - The add-on is installed to `userdata\0000000000000000\58410A95\00000002\<package>\` (ReXGlue's

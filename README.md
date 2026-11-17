@@ -30,8 +30,9 @@ brought up for it.
 ## Status
 
 - **Stock renderer (ReXGlue's Xenos plugin): plays**, from the title screen into the first
-  mission. It needs `render_target_path_d3d12 = "rov"` (set in `config/ironbrigade.toml`): the
-  game renders its scene in the 7e3 HDR format, which the default path approximates too bright.
+  mission. It needs `render_target_path = "rov"` under `[gpu.d3d12]` (set in
+  `config/ironbrigade.toml`): the game renders its scene in the 7e3 HDR format, which the
+  default path approximates too bright.
 - **Native renderer (ReXNative, with DLAA / DLSS / DLSS 5 and a settings menu): in progress.**
   It draws the warning, logo and title screens and opens its settings menu (**F1**), and the
   game goes on into its intro (the GPU hang the first 3D frames used to cause is fixed: this
