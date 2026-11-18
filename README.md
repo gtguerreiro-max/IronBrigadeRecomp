@@ -121,7 +121,9 @@ Its upscaler (off by default) runs **FSR 4.1** on the Deck: `play.sh` sets
 time (tested 2026-11-16: "ReXNative upscaler: 4.1.2" in the game's log); under Valve's Proton,
 or with `PROTON_FSR4_UPGRADE=0` in a `deck.env` beside `play.sh`, it is FSR 3.1.
 
-## Credits
+## Credits and licence
+
+This port's own code is under the [MIT License](LICENSE).
 
 - [ReXGlue SDK](https://github.com/rexglue/rexglue-sdk): the recompiler and runtime, built on
   [Xenia](https://github.com/xenia-project/xenia) (BSD 3-Clause).
